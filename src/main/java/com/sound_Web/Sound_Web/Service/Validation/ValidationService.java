@@ -1,11 +1,12 @@
-package com.sound_Web.Sound_Web.Service;
+package com.sound_Web.Sound_Web.Service.Validation;
 
 import com.sound_Web.Sound_Web.Model.EmailAndUsername;
-import com.sound_Web.Sound_Web.Respository.solr.ValidationRespository;
-import com.sound_Web.Sound_Web.Rest.LoginRestController;
+import com.sound_Web.Sound_Web.Repository.solr.ValidationRespository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.logging.Logger;
 @Service
 public class ValidationService {
@@ -30,6 +31,11 @@ public class ValidationService {
 
     public EmailAndUsername getByUserName(String username) {
         return  validationRespository.findByName(username);
+    }
+    @Transactional
+    @Async
+    public Boolean updateUserInfomation(String id , String passWord) {
+        return true ;
     }
 
 

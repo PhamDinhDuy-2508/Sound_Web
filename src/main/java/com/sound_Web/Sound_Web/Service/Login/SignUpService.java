@@ -1,13 +1,13 @@
-package com.sound_Web.Sound_Web.Service;
+package com.sound_Web.Sound_Web.Service.Login;
 
-import com.sound_Web.Sound_Web.Event.SendEmailEventSignUp;
+import com.sound_Web.Sound_Web.Event.Mail.SendEmailEventSignUp;
 //import com.sound_Web.Sound_Web.Model.EmailAndUsername;
 import com.sound_Web.Sound_Web.Model.EmailAndUsername;
 import com.sound_Web.Sound_Web.Model.User;
 import com.sound_Web.Sound_Web.DTO.SignUp;
-import com.sound_Web.Sound_Web.Respository.UserResponsitory;
-import com.sound_Web.Sound_Web.Event.sendMailServiceSignUp;
-import com.sound_Web.Sound_Web.Respository.solr.ValidationRespository;
+import com.sound_Web.Sound_Web.Repository.UserResponsitory;
+import com.sound_Web.Sound_Web.Event.Mail.sendMailServiceSignUp;
+import com.sound_Web.Sound_Web.Repository.solr.ValidationRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -55,9 +55,9 @@ public class SignUpService {
 
         userResponsitory.save(user1);
 
-        validationRespository.save(emailAndUsername);
+//        validationRespository.save(emailAndUsername);
 
-        applicationEventPublisher.publishEvent(new SendEmailEventSignUp(this, user1));
+//        applicationEventPublisher.publishEvent(new SendEmailEventSignUp(this, user1));
 
     }
 

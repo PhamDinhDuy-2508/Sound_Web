@@ -1,4 +1,4 @@
-package com.sound_Web.Sound_Web.Event;
+package com.sound_Web.Sound_Web.Event.Mail;
 
 import com.sound_Web.Sound_Web.Model.User;
 import org.springframework.context.ApplicationEvent;

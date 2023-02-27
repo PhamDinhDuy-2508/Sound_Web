@@ -1,8 +1,8 @@
-package com.sound_Web.Sound_Web.Event;
+package com.sound_Web.Sound_Web.Event.Mail;
 
-import com.sound_Web.Sound_Web.Event.SendEmailEventSignUp;
+//import com.sound_Web.Sound_Web.Security.JWT.JwtTokenProvider;
 import com.sound_Web.Sound_Web.POJO.Utility;
-import com.sound_Web.Sound_Web.Service.SendMailInterface;
+import com.sound_Web.Sound_Web.Security.JWT.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,6 +21,9 @@ public class sendMailServiceSignUp {
     @Autowired
     JavaMailSender javaMailSender;
 
+    @Autowired
+    JwtTokenProvider tokenProvider ;
+
 
     public void Send(String email) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -38,7 +41,6 @@ public class sendMailServiceSignUp {
         helper.setText(content, true);
 
         javaMailSender.send(message);
-        //AccountList
     }
     @Async
     @Transactional
@@ -61,7 +63,8 @@ public class sendMailServiceSignUp {
                 + "<p><a href=" + resetPasswordLink + ">Change my password</a></p>"
                 + "<br>"
                 + "<p> Bỏ qua thư này nếu bạn đã nhớ lại được mật khẩu"
-                + "Hoặc bạn không có ý định nhận thư này.</p>";
+                + "Hoặc bạn không có ý định nhận thư này thì hãy bỏ qua. </p>"
+                + "<p>Chân thành cảm ơn.</p>" ;
 
         helper.setSubject(subject);
 

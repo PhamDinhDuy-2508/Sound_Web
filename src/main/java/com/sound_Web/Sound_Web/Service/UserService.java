@@ -1,37 +1,56 @@
 package com.sound_Web.Sound_Web.Service;
+/*******************************************************
+ * For Vietnamese readers:
+ *    Các bạn thân mến, mình rất vui nếu project này giúp 
+ * ích được cho các bạn trong việc học tập và công việc. Nếu 
+ * bạn sử dụng lại toàn bộ hoặc một phần source code xin để 
+ * lại dường dẫn tới github hoặc tên tác giá.
+ *    Xin cảm ơn!
+ *******************************************************/
 
-import com.sound_Web.Sound_Web.Model.CustomerDetails;
+import javax.transaction.Transactional;
+
 import com.sound_Web.Sound_Web.Model.User;
-import com.sound_Web.Sound_Web.Respository.UserResponsitory;
+import com.sound_Web.Sound_Web.Repository.UserResponsitory;
+import com.sound_Web.Sound_Web.Service.User.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+/**
+ * Copyright 2019 {@author Loda} (https://loda.me).
+ * This project is licensed under the MIT license.
+ *
+ * @since 4/30/2019
+ * Github: https://github.com/loda-kun
+ */
 @Service
+public class UserService implements UserDetailsService {
 
-public class UserService  implements UserDetailsService {
     @Autowired
-    UserResponsitory userResponsitory;
+    private UserResponsitory userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        User user = userResponsitory.findUserByAccount(username);
+    public UserDetails loadUserByUsername(String username) {
+        // Kiểm tra xem user có tồn tại trong database không?
+        User user = userRepository.findUserByAccount(username);
         if (user == null) {
-            return null;
+            throw new UsernameNotFoundException(username);
         }
-        return new CustomerDetails(user);
+        return new CustomUserDetails(user);
     }
 
-    public UserDetails loadUserById(String userid) throws UsernameNotFoundException {
+    // JWTAuthenticationFilter sẽ sử dụng hàm này
+    @Transactional
+    public UserDetails loadUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with id : " + id)
+        );
 
-        long l=Long.parseLong(userid);
-        User user = userResponsitory.findByUserID(userid);
-        if (user == null) {
-            return null;
-        }
-        return new CustomerDetails(user);
+        return new CustomUserDetails(user);
     }
+
+
 }

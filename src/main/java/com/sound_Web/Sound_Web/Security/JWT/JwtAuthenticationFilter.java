@@ -1,7 +1,13 @@
-package com.sound_Web.Sound_Web.JWT;
+package com.sound_Web.Sound_Web.Security.JWT;
 
-import com.sound_Web.Sound_Web.Service.UserService;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.sound_Web.Sound_Web.Service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,12 +16,16 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
+//import me.loda.springsecurityhibernatejwt.user.UserService;
 
+/**
+ * Copyright 2019 {@author Loda} (https://loda.me).
+ * This project is licensed under the MIT license.
+ *
+ * @since 5/1/2019
+ * Github: https://github.com/loda-kun
+ */
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
@@ -28,18 +38,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            // Lấy jwt từ request
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                // Lấy id user từ chuỗi jwt
                 Long userId = tokenProvider.getUserIdFromJWT(jwt);
-                // Lấy thông tin người dùng từ id
+
                 UserDetails userDetails = customUserDetailsService.loadUserById(String.valueOf(userId));
                 if(userDetails != null) {
-
                     UsernamePasswordAuthenticationToken
-                            authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                            authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+                                                                                     userDetails
+                                                                                             .getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -54,7 +63,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        // Kiểm tra xem header Authorization có chứa thông tin jwt không
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }

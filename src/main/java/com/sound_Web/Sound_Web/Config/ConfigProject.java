@@ -4,21 +4,20 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.repository.config.EnableSolrRepositories;
 import org.apache.solr.client.solrj.SolrClient;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.config.BeanIds;
+//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 
 import javax.annotation.Resource;
-import java.time.Duration;
 
 @Configuration
 @EnableSolrRepositories(
-        basePackages = "com.sound_Web.Sound_Web.Respository.solr")
+        basePackages = "com.sound_Web.Sound_Web.Repository.solr")
 @PropertySource("classpath:application.properties")
 //@EnableRedisRepositories
 
@@ -58,6 +57,7 @@ public class ConfigProject {
 
         return template;
     }
+
 //    @Bean
 //    public CommonsMultipartResolver multipartResolver() {
 //        CommonsMultipartResolver resolver = new CommonsMultipartResolver() ;

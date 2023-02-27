@@ -1,57 +1,50 @@
 package com.sound_Web.Sound_Web.Service.ResetPassImpl;
 
-import com.sound_Web.Sound_Web.Event.SendEmailEventSignUp;
-import com.sound_Web.Sound_Web.Event.SendEmailResetPassEvent;
+import com.sound_Web.Sound_Web.Event.Mail.SendEmailResetPassEvent;
 import com.sound_Web.Sound_Web.Model.EmailAndUsername;
-import com.sound_Web.Sound_Web.Service.Resetpass;
-import com.sound_Web.Sound_Web.Service.ValidationService;
-import net.bytebuddy.utility.RandomString;
+import com.sound_Web.Sound_Web.Model.User;
+import com.sound_Web.Sound_Web.Repository.UserResponsitory;
+import com.sound_Web.Sound_Web.Security.JWT.JwtTokenProvider;
+import com.sound_Web.Sound_Web.Service.Validation.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Qualifier("ResetPassUsingAccount")
 @EnableCaching
-public class ResetPassUsingAccount {
+public class ResetPassWordService {
     @Autowired
     ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
     ValidationService validationService;
+    @Autowired
+    UserResponsitory userResponsitory;
+
+    @Autowired
+    JwtTokenProvider tokenProvider;
+
 
     public EmailAndUsername getInfo(String info) {
         return validationService.getByUserName(info);
     }
 
+    @Async
     public void SendEmail(String Email, HttpServletRequest request) {
-
-        String token = RandomString.make(45);
-
-        while (checkTokenExist(token)) {
-            token = RandomString.make(45);
-        }
-        redisTemplate.opsForValue().set(token, Email);
-
-        redisTemplate.expire(token, 20, TimeUnit.MINUTES);
-
+        User user = userResponsitory.findUserByEmail(Email);
+        String token = tokenProvider.generateToken(String.valueOf(user.getUserID()));
         applicationEventPublisher.publishEvent(new SendEmailResetPassEvent(this, Email, token, request));
     }
-    public boolean checkTokenExist(String token) {
 
+    public boolean checkTokenExist(String token) {
         try {
             Object object = redisTemplate.opsForValue().get(token);
             if (object == null) {
@@ -63,7 +56,6 @@ public class ResetPassUsingAccount {
             return false;
         }
     }
-
     @Async
     public void ProcessReset(String info, HttpServletRequest request) {
         String email = getInfo(info).getEmail();

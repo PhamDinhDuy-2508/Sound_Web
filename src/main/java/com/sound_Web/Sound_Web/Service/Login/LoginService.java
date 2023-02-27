@@ -1,9 +1,10 @@
-package com.sound_Web.Sound_Web.Service;
+package com.sound_Web.Sound_Web.Service.Login;
 
-import com.sound_Web.Sound_Web.JWT.JwtTokenProvider;
 import com.sound_Web.Sound_Web.Model.CustomerDetails;
 import com.sound_Web.Sound_Web.Model.User;
 import com.sound_Web.Sound_Web.DTO.LoginResponse;
+import com.sound_Web.Sound_Web.Security.JWT.JwtTokenProvider;
+import com.sound_Web.Sound_Web.Service.User.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,8 +30,8 @@ public class LoginService {
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtTokenProvider.generateToken((CustomerDetails) authentication.getPrincipal());
-        return new LoginResponse(jwt);
+        String jwt = jwtTokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
+        return new LoginResponse("jwt");
     }
 
 }
